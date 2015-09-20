@@ -1,0 +1,157 @@
+
+Question 1
+
+(seed = 317948)
+Suppose that you time a program as a function of N and produce
+the following table.
+
+        N   seconds
+-------------------
+       32     0.001
+       64     0.005
+      128     0.086
+      256     1.091
+      512    14.213
+     1024   177.338
+     2048  2308.424
+
+
+Estimate the order of growth of the running time as a function of N.
+Assume that the running time obeys a power law T(N) ~ a N^b. For your
+answer, enter the constant b. Your answer will be marked as correct
+if it is within 1% of the target answer - we recommend using
+two digits after the decimal separator, e.g., 2.34.
+
+Answer for Question 1
+You entered:
+2,35
+Your Answer 		Score 	Explanation
+2,35 	Incorrect 	0.00 	
+Total 		0.00 / 1.00 	
+Question Explanation
+
+The theoretical order-of-growth is N ^ (48/13) = 3.69
+
+The empirical order-of-growth is N ^ (log_2 ratio)
+
+                                  log_2
+        N   seconds     ratio     ratio
+---------------------------------------
+       32     0.001         -         -
+       64     0.005      5.00      2.32
+      128     0.086     17.20      4.10
+      256     1.091     12.69      3.67
+      512    14.213     13.03      3.70
+     1024   177.338     12.48      3.64
+     2048  2308.424     13.02      3.70
+
+Question 2
+
+(seed = 962251)
+What is the order of growth of the worst case running time of the following code fragment
+as a function of N?
+
+int sum = 0;
+for (int i = 1; i <= N; i = i*2)
+    for (int j = 0; j < i; j++)
+        sum++;
+
+Your Answer 		Score 	Explanation
+
+1
+
+			
+
+log N
+
+			
+
+N^(1/2)
+
+			
+
+N
+
+			
+
+N log N
+
+			
+
+N^(3/2)
+
+			
+
+N^2
+
+			
+
+N^2 log N
+
+			
+
+N^(5/2)
+
+	Inorrect 	0.00 	
+
+N^3
+
+			
+
+N^4
+
+			
+
+N^5
+
+			
+
+N^6
+
+			
+
+N^7
+
+			
+Total 		0.00 / 1.00 	
+Question Explanation
+
+The answer is : N
+
+The body of the inner loop is executed 1 + 2 + 4 + 8 + ... + N ~ 2N times.
+
+Question 3
+
+(seed = 516315)
+Given the following definition of a MysteryBox object: 
+
+public class MysteryBox {
+    private boolean x0, x1, x2;
+    private int y0;
+    private double z0, z1;
+    private long[] a = new long[176];
+
+    ...
+}
+
+Using the 64-bit memory cost model from lecture, how many bytes does each object of type MysteryBox use?
+
+Answer for Question 3
+You entered:
+1494
+Your Answer 		Score 	Explanation
+1494 	Incorrect 	0.00 	
+Total 		0.00 / 1.00 	
+Question Explanation
+
+The correct answer is:1480
+
+public class MysteryBox {                     //   16 (object overhead)
+    private boolean x0, x1, x2;               //    3 (3 boolean)
+    private int y0;                           //    4 (1 int)
+    private double z0, z1;                    //   16 (2 double)
+    private long[] a = new long[176];         //    8 (reference to array)
+                                              // 1432 (long array of size 176)
+    ...                                             1 (padding to round up to a multiple of 8)
+}                                                ----
+                                                 1480
