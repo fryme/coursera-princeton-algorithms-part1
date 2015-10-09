@@ -3,21 +3,15 @@ import  edu.princeton.cs.algs4.LinkedStack;
 public class BruteCollinearPoints {
     
     LineSegment[] mLineSegments;
-    
-    private class Slope
-    {
-        double mSlopeValue;
-        Point mPoint1;
-        Point mPoint2;
-    };
-    
-    Slope[] mSlopes; // array contains slopes between all points
     Point[] mPoints;
+    //Point[] mLessPoints;
+    //Point[] mMaxPoints;
     
     public BruteCollinearPoints(Point[] points)    // finds all line segments containing 4 points
     {
-        mSlopes = new Slope[points.length * 2];
         mPoints = points; 
+        //mLessPoints = new Point[points.length];
+        //mMaxPoints = new Point[points.length];
     }
     
     public int numberOfSegments()        // the number of line segments
@@ -25,73 +19,80 @@ public class BruteCollinearPoints {
         return mLineSegments.length;
     }
     
-    private void calculateSegments()
+    Point findLessPoint(Point point1, Point point2, Point point3, Point point4)
     {
-        int firstIndex = 0;//, secondIndex = ;
-        int slopeIndex = 0;
-        while (firstIndex != mPoints.length)
-        {
-            for (int pointIndex = firstIndex; pointIndex < mPoints.length - 1; ++pointIndex)
-            {
-                Point firstPoint = mPoints[firstIndex];
-                Point secondPoint = mPoints[pointIndex];
-                mSlopes[slopeIndex].mSlopeValue = firstPoint.slopeTo(secondPoint);
-                mSlopes[slopeIndex].mPoint1 = firstPoint;
-                mSlopes[slopeIndex].mPoint2 = secondPoint;
-                slopeIndex++;
-            }
-            firstIndex++;
-        }
+        Point lesserPoint;
+        if (point1.compareTo(point2) < 0)
+            lesserPoint = point1;
+        else
+            lesserPoint = point2;
+        
+        if (point3.compareTo(lesserPoint) < 0)
+            lesserPoint = point3;
+        
+        if (point4.compareTo(lesserPoint) < 0)
+            lesserPoint = point4;
+        
+        return lesserPoint;
     }
     
-    private void findSegmentsInOneLine()
+    Point findMaxPoint(Point point1, Point point2, Point point3, Point point4)
     {
-        for (int firstSlopeIndex = 0; firstSlopeIndex < mSlopes.length; ++firstSlopeIndex)
+        Point maxPoint;
+        if (point1.compareTo(point2) > 0)
+            maxPoint = point1;
+        else
+            maxPoint = point2;
+        
+        if (point3.compareTo(maxPoint) > 0)
+            maxPoint = point3;
+        
+        if (point4.compareTo(maxPoint) > 0)
+            maxPoint = point4;
+        
+        return maxPoint;
+    }
+    
+    private void calculateSegments()
+    {
+        int lineSegmentsIndex = 0;
+        for (int pointIndex = 0; pointIndex < mPoints.length; ++pointIndex)
         {
-            LinkedStack<Slope> slopesOnOneLine = new LinkedStack<Slope>();
-            for (int secondSlopeIndex = firstSlopeIndex + 1; secondSlopeIndex < mSlopes.length; ++secondSlopeIndex)
+            Point point1 = mPoints[pointIndex];
+            for (int pointIndex2 = 0; pointIndex2 < mPoints.length; ++pointIndex2)
             {
-                Slope firstSlope = mSlopes[firstSlopeIndex];
-                Slope secondSlope = mSlopes[secondSlopeIndex];
-                if (firstSlope.mSlopeValue == secondSlope.mSlopeValue)
-                {
-                    if (firstSlope.mSlopeValue == 0)
-                    {
-                        if (firstSlope.mPoint1.compareTo(secondSlope.mPoint2) == 0)
-                            continue; // points are equals
-                        
-                        // How to determine points on different lines?
-                        if (slopesOnOneLine.size() == 0)
-                        {
-                            slopesOnOneLine.push(firstSlope);
-                            slopesOnOneLine.push(secondSlope);
-                        }
-                        else
-                        {
-                            slopesOnOneLine.push(secondSlope);
-                        }
-                        // if (firstSlope.mPoint1.compareTo(secondSlope.mPoint2) == 1)
-                            // on one line;
-                    }
-                    else if (firstSlope.mSlopeValue == secondSlope.mSlopeValue)
-                    {
-                        if (slopesOnOneLine.size() == 0)
-                        {
-                            slopesOnOneLine.push(firstSlope);
-                            slopesOnOneLine.push(secondSlope);
-                        }
-                        else
-                        {
-                            slopesOnOneLine.push(secondSlope);
-                        }
-                    }
-                }
+                Point point2 = mPoints[pointIndex2];
+                if (0 == point1.compareTo(point2))
+                    continue;
                 
-                if (slopesOnOneLine.size() == 4)
+                double slope12 = point1.slopeTo(point2);
+                
+                for (int pointIndex3 = pointIndex2; pointIndex3 < mPoints.length; ++pointIndex3)
                 {
-                    for (int slopeIndex = 0; slopeIndex < slopesOnOneLine.size(); ++slopeIndex)
+                    Point point3 = mPoints[pointIndex3];
+                    
+                    if (0 == point2.compareTo(point3))
+                        continue;
+                    
+                    double slope23 = point2.slopeTo(point3);
+                    
+                    for (int pointIndex4 = pointIndex3; pointIndex4 < mPoints.length; ++pointIndex4)
                     {
+                        Point point4 = mPoints[pointIndex4];
                         
+                        if (0 == point3.compareTo(point4))
+                            continue;
+                        
+                        double slope34 = point3.slopeTo(point4);
+                        
+                        if (slope12 == slope23 && slope23 == slope34)
+                        {
+                            Point lessPoint = findLessPoint(point1, point2, point3, point4);
+                            Point maxPoint = findMaxPoint(point1, point2, point3, point4);
+                            
+                            // for (int lessIndex = 0; )
+                            mLineSegments[lineSegmentsIndex++] = new LineSegment(lessPoint, maxPoint);                            
+                        }
                     }
                 }
             }
@@ -101,7 +102,6 @@ public class BruteCollinearPoints {
     public LineSegment[] segments()                // the line segments
     {
         calculateSegments();
-        findSegmentsInOneLine();
         return mLineSegments;
     }
 }

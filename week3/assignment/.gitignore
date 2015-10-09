@@ -1,3 +1,5 @@
 /LineSegment.class
 /Point.class
 /BruteCollinearPoints.class
+/FastCollinearPoints.class
+/Point$PointComparator.class

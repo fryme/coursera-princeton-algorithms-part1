@@ -7,14 +7,36 @@
  *  For use on Coursera, Algorithms Part I programming assignment.
  *
  ******************************************************************************/
+import java.util.Arrays;
 
 import java.util.Comparator;
-import edu.princeton.cs.algs4.StdDraw;
+import  edu.princeton.cs.algs4.*;
 
 public class Point implements Comparable<Point> {
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
+    
+    private class PointComparator implements Comparator<Point>
+    {
+        Point mP;
+        PointComparator(Point p)
+        {
+            mP = p;
+        }
+        public int compare(Point lhv, Point rhv) {
+            double lSlope = mP.slopeTo(lhv);
+            double rSlope = mP.slopeTo(rhv); 
+            System.out.println(lhv + " " + lSlope + " | " + rSlope + " " + rhv);
+            
+            if (lSlope < rSlope)
+                return -1;
+            else if (lSlope == rSlope)
+                return 0;
+            else 
+                return 1;
+        }
+    }
 
     /**
      * Initializes a new point.
@@ -61,8 +83,18 @@ public class Point implements Comparable<Point> {
     public double slopeTo(Point that) {
         if ((that.y - this.y) == 0)
             return +0.0;
+
+        if ((that.x - this.x) == 0)
+            return Double.POSITIVE_INFINITY;
+     
+        if (this.compareTo(that) == 0)
+            return Double.NEGATIVE_INFINITY;
         
-        return (that.y)
+        System.out.println(this);
+        System.out.println(that);
+        System.out.println((that.y - this.y) / (that.x - this.x));
+        System.out.println(">");
+        return (that.y - this.y) / (that.x - this.x);
     }
 
     /**
@@ -105,8 +137,8 @@ public class Point implements Comparable<Point> {
      *
      * @return the Comparator that defines this ordering on points
      */
-    public Comparator<Point> slopeOrder() {
-        /* YOUR CODE HERE */
+    public Comparator<Point> slopeOrder(Point p) {
+        return new PointComparator(p);
     }
 
 
@@ -126,6 +158,27 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        /* YOUR CODE HERE */
+        Point [] points = {
+        new Point(2, 4), 
+        new Point(1, 2), 
+        new Point(3, 7), 
+        new Point(7, 3)};
+                        
+        System.out.println("Before sorting.");
+            
+        for (int i = 0; i < points.length; i++) {
+            System.out.println(points[i]);
+        }
+        System.out.println(">>>");
+        // Arrays.sort(points, points[4].slopeOrder());
+        
+        
+        Arrays.sort(points, 1, points.length, points[0].slopeOrder(points[0]));
+            
+        System.out.println("************************");
+            System.out.println("After sorting");
+            for (int i = 0; i < points.length; i++) {
+                System.out.println(points[i]);
+            }
     }
 }
