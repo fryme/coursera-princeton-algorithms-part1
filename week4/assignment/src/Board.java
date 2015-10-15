@@ -1,14 +1,16 @@
 import java.lang.Math;
 import java.lang.Iterable;
 //import edu.princeton.cs.algs4.StdRandom;
+import java.util.NoSuchElementException;
 
 public class Board {
     
     private int[][] mBoard;
     private int mDimension;
     
-    public Board(int[][] blocks)           // construct a board from an N-by-N array of blocks
-                                           // (where blocks[i][j] = block in row i, column j)
+    // construct a board from an N-by-N array of blocks
+    // (where blocks[i][j] = block in row i, column j)
+    public Board(int[][] blocks)
     {
         mBoard = blocks.clone();
         mDimension = (int) Math.sqrt((double) mBoard.length);
@@ -109,9 +111,66 @@ public class Board {
         return (thatBoard.mBoard == mBoard);
     }
 
+    Board swap(int row1, int column1, int row2, int column2)
+    {
+        Board board = new Board(mBoard);
+        int temp = board.mBoard[row1][column1];
+        board.mBoard[row1][column1] = board.mBoard[row2][column2];
+        board.mBoard[row2][column2] = temp;
+        return board;
+    }
+    
     private class BoardIterator implements Iterator<Board>
     {
+        edu.princeton.cs.algs4.LinkedStack<Board> mNeighbors;
         
+        BoardIterator()
+        {
+            int mZeroRow;
+            int mZeroColumn;
+            
+            for (int row = 0; row < mDimension; row++)
+            {
+                for (int column = 0; column < mDimension; column++)
+                {
+                    if (mBoard[row][column] == 0)
+                    {   
+                        mZeroRow = row;
+                        mZeroColumn = column;
+                        break;
+                    }
+                }
+            }
+            
+            mNeighbors = new edu.princeton.cs.algs4.LinkedStack<Board>();
+            
+            if ((mZeroRow - 1) >= 0)
+                mNeighbors.push(swap(mZeroRow, mZeroColumn, mZeroRow - 1, mZeroColumn));
+            
+            if ((mZeroRow + 1) < mDimension)
+                mNeighbors.push(swap(mZeroRow, mZeroColumn, mZeroRow + 1, mZeroColumn));
+            
+            if ((mZeroColumn - 1) >= 0)
+                mNeighbors.push(swap(mZeroRow, mZeroColumn, mZeroRow, mZeroColumn - 1));
+            
+            if ((mZeroColumn + 1) >= 0)
+                mNeighbors.push(swap(mZeroRow, mZeroColumn, mZeroRow, mZeroColumn + 1));
+        }
+        
+        public boolean hasNext()  
+        {
+            return !mNeighbors.isEmpty();
+        }
+        
+        public void remove()
+        { 
+            throw new UnsupportedOperationException();  
+        }
+
+        public Board next() 
+        {
+            return mNeighbors.pop();
+        }
     }
     
     public Iterable<Board> neighbors()     // all neighboring boards
